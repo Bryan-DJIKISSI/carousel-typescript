@@ -150,3 +150,19 @@ body {
     font-size: 1.2rem;
 }
 
+@media (max-width: 968px) {
+    .card {
+        min-width: calc(50% - 10px);
+    }
+}
+
+@media (max-width: 640px) {
+    .card {
+        min-width: 100%;
+    }
+    
+    .carousel-container {
+        padding: 20px 50px;
+    }
+}
+

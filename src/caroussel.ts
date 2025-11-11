@@ -3,6 +3,9 @@ const navLeft = document.querySelector('.nav-left') as HTMLElement;
 const navRight = document.querySelector('.nav-right') as HTMLElement;
 const cards = document.querySelectorAll('.card') as NodeListOf<HTMLElement>;
 
+let autoScrolInterval: number | null =  null;
+let autoScrollDelay: number = 3000;
+
 let currentIndex: number = 0;
 const totalCards: number = cards.length;
 let cardsPerView: number = 3;
@@ -26,11 +29,34 @@ function updateCarousel(): void {
     carousel.style.transform = `translateX(${translateValue}px)`;
 }
 
+function startAutoScroll():void {
+    autoScrolInterval = window.setInterval(() => {
+        if(currentIndex < totalCards - cardsPerView) {
+            currentIndex++
+        } else {
+            currentIndex = 0;
+        }
+        updateCarousel();
+    }, autoScrollDelay);
+}
+
+function stopAutoScroll(): void {
+    if (autoScrolInterval !== null) {
+        clearInterval(autoScrolInterval);
+        autoScrolInterval = null;
+    }
+}
+
 function nextSlide(): void {
     if (currentIndex < totalCards - cardsPerView) {
         currentIndex++;
         updateCarousel();
     }
+}
+
+function resetAutoScroll(): void {
+    stopAutoScroll();
+    startAutoScroll();
 }
 
 function prevSlide(): void {
@@ -40,8 +66,18 @@ function prevSlide(): void {
     }
 }
 
-navRight.addEventListener('click', nextSlide);
-navLeft.addEventListener('click', prevSlide);
+navRight.addEventListener('click', () =>{
+    nextSlide();
+    resetAutoScroll();
+});
+navLeft.addEventListener('click', () => {
+    prevSlide();
+    resetAutoScroll();
+} );
+
+carousel.addEventListener('mouseenter', stopAutoScroll);
+carousel.addEventListener('mouseleave', startAutoScroll);
 
 updateCardsPerView();
 updateCarousel();
+startAutoScroll();
